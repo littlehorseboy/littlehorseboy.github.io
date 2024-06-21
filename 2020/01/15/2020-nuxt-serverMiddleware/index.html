@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>Nuxt.js 利用 serverMiddleware 讓 page.vue 接 POST 來的資料 | 小馬彬的部落格</title><meta name="description" content="Nuxt.js 利用 serverMiddleware 讓 page.vue 接 POST 來的資料"><meta name="keywords" content="nuxt,serverMiddleware"><meta name="author" content="小馬彬"><meta name="copyright" content="小馬彬"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="//busuanzi.ibruce.info"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Nuxt.js 利用 serverMiddleware 讓 page.vue 接 POST 來的資料"><meta name="twitter:description" content="Nuxt.js 利用 serverMiddleware 讓 page.vue 接 POST 來的資料"><meta name="twitter:image" content="https://nuxtjs.org/design-kit/colored-logo.svg"><meta property="og:type" content="article"><meta property="og:title" content="Nuxt.js 利用 serverMiddleware 讓 page.vue 接 POST 來的資料"><meta property="og:url" content="https://littlehorseboy.github.io/2020/01/15/2020-nuxt-serverMiddleware/"><meta property="og:site_name" content="小馬彬的部落格"><meta property="og:description" content="Nuxt.js 利用 serverMiddleware 讓 page.vue 接 POST 來的資料"><meta property="og:image" content="https://nuxtjs.org/design-kit/colored-logo.svg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'false'
+var t = Cookies.get("theme");
+if (autoChangeMode == '1'){
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+if (t === undefined){
+  if (isLightMode) activateLightMode()
+  else if (isDarkMode) activateDarkMode()
+  else if (isNotSpecified || hasNoSupport){
+    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+    now = new Date();
+    hour = now.getHours();
+    isNight = hour < 6 || hour >= 18
+    isNight ? activateDarkMode() : activateLightMode()
+}
+} else if (t == 'light') activateLightMode()
+else activateDarkMode()
+
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="https://littlehorseboy.github.io/2020/01/15/2020-nuxt-serverMiddleware/"><link rel="prev" title="Javascript 的 Boolean 居然能這樣用（搭配 Array）" href="https://littlehorseboy.github.io/2020/01/24/2020-Javascript-Array-and-Boolean/"><link rel="next" title="最近讀完了一本 UX 的新手書（不是分享 XD）" href="https://littlehorseboy.github.io/2020/01/06/2020-ux-beginner-100/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'G-WZGV3XB0XF', 'auto');
+ga('send', 'pageview');
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查詢的內容:${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://xxx/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支持'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: '按',
+    message_next: '鍵將本頁加入書籤'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  baiduPush: false,
+  isHome: false,
+  isPost: true
+  
+}</script><meta name="generator" content="Hexo 6.0.0"></head><body><header> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">小馬彬的部落格</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 文章總覽</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情鏈接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 關於我</span></a></div></div></span><span class="pull_right" id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> 搜索</span></a></span></div></header><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="https://avatars0.githubusercontent.com/u/16015679" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">55</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">標籤</div><div class="length_num">30</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分類</div><div class="length_num">27</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 文章總覽</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情鏈接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 關於我</span></a></div></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">目錄</div><div class="sidebar-toc__content"><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#2020-1-16-%E4%BF%AE%E6%AD%A3-2020-1-15-%E6%89%80%E8%BF%B0%E5%85%A7%E5%AE%B9"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">2020&#x2F;1&#x2F;16 修正 2020&#x2F;1&#x2F;15 所述內容</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#%E4%BB%A5%E4%B8%8B%E7%82%BA-2020-1-15-%E6%92%B0%E5%AF%AB"><span class="toc_mobile_items-number">2.</span> <span class="toc_mobile_items-text">以下為 2020&#x2F;1&#x2F;15 撰寫</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#serverMiddleware"><span class="toc_mobile_items-number">3.</span> <span class="toc_mobile_items-text">serverMiddleware</span></a></li></ol></div></div></div><div id="body-wrap"><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目錄</div><div class="sidebar-toc__progress"><span class="progress-notice">你已經讀了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#2020-1-16-%E4%BF%AE%E6%AD%A3-2020-1-15-%E6%89%80%E8%BF%B0%E5%85%A7%E5%AE%B9"><span class="toc-number">1.</span> <span class="toc-text">2020&#x2F;1&#x2F;16 修正 2020&#x2F;1&#x2F;15 所述內容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8B%E7%82%BA-2020-1-15-%E6%92%B0%E5%AF%AB"><span class="toc-number">2.</span> <span class="toc-text">以下為 2020&#x2F;1&#x2F;15 撰寫</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#serverMiddleware"><span class="toc-number">3.</span> <span class="toc-text">serverMiddleware</span></a></li></ol></div></div></div><main id="content-outer"><div id="top-container" style="background-image: url(https://nuxtjs.org/design-kit/colored-logo.svg)"><div id="post-info"><div id="post-title"><div class="posttitle">Nuxt.js 利用 serverMiddleware 讓 page.vue 接 POST 來的資料</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 發表於 2020-01-15<span class="post-meta__separator">|</span><i class="fa fa-history fa-fw" aria-hidden="true"></i> 更新於 2024-06-21</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon fa-fw" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/nuxt/">nuxt</a><i class="fa fa-angle-right fa-fw" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon fa-fw" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/nuxt/serverMiddleware/">serverMiddleware</a></span><div class="post-meta-wordcount"><div class="post-meta-pv-cv"><span><i class="fa fa-eye post-meta__icon fa-fw" aria-hidden="true"> </i>閲讀量:</span><span id="busuanzi_value_page_pv"></span></div></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><html><head></head><body><p>Hi，大家好，我是小馬彬，最近在公司都在玩 Nuxt.js，其實得說大部分的需求在官方文檔上都能找到解方，主要要區分好組件生命週期是後端渲染的部分還是前端渲染的部分，不過這次會寫這篇的主要目的就是因為標題上的敘述</p>
+<blockquote>
+<p>需求是想要讓某個 page 能夠接到從其他頁面的表單 POST 送出跳轉過來的資料</p>
+</blockquote>
+<hr>
+<h2 id="2020-1-16-修正-2020-1-15-所述內容"><a href="#2020-1-16-修正-2020-1-15-所述內容" class="headerlink" title="2020/1/16 修正 2020/1/15 所述內容"></a>2020/1/16 修正 2020/1/15 所述內容</h2><p>其實可以直接用 Nuxt 提供的 context 來得到 POST 來的資料，根本不必特別玩 serverMiddleware 啦，不過就當補充知識吧！</p>
+<p>直接在 pages/index.vue 即可</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">javascript</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">asyncData</span>(<span class="params">{ req }</span>)</span> {</span><br><span class="line">  <span class="built_in">console</span>.log(req.body);</span><br><span class="line">},</span><br></pre></td></tr></tbody></table></figure></div>
+
+<hr>
+<h2 id="以下為-2020-1-15-撰寫"><a href="#以下為-2020-1-15-撰寫" class="headerlink" title="以下為 2020/1/15 撰寫"></a>以下為 2020/1/15 撰寫</h2><p>起初還以為可以直接利用 Nuxt 提供的 context 來得到 POST 來的資料</p>
+<p><a target="_blank" rel="noopener" href="https://i.imgur.com/oasAHFN.png" data-fancybox="group" data-caption="undefined" class="fancybox"><img data-src="https://i.imgur.com/oasAHFN.png" class="lazyload"></a></p>
+<p>但是</p>
+<p><strong>想得太美了！</strong></p>
+<p>把這幾個看起來比較有可能跟接 POST 資料有關的 req, res 都 console 出來，結果是偏尋不著，原來還是得特別跟 node.js 打打交道</p>
+<p>後來 google 到 serverMiddleware 這個解方，它可以將一隻類似 node.js http.createServer 的 function 掛給某一個 path 來使用</p>
+<hr>
+<h2 id="serverMiddleware"><a href="#serverMiddleware" class="headerlink" title="serverMiddleware"></a>serverMiddleware</h2><p>筆者當初創建 Nuxt 專案時沒有使用 express，所以以下紀錄的方式是一般的 node.js 使用方式</p>
+<p>首先</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">bash</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i querystring</span><br></pre></td></tr></tbody></table></figure></div>
+
+<p>要利用 querystring 這個第三方函式庫來 parse 其他頁面所 POST 來的資料</p>
+<p>創建一隻 js</p>
+<p>~/middleware/postRequestHandler.js</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">javascript</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> querystring = <span class="built_in">require</span>(<span class="string">'querystring'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (req, res, next) => {</span><br><span class="line">  <span class="keyword">let</span> body = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">  req.on(<span class="string">'data'</span>, <span class="function">(<span class="params">data</span>) =></span> {</span><br><span class="line">    body += data;</span><br><span class="line">  });</span><br><span class="line"></span><br><span class="line">  req.on(<span class="string">'end'</span>, <span class="function">() =></span> {</span><br><span class="line">    req.body = querystring.parse(body) || {};</span><br><span class="line">    next();</span><br><span class="line">  });</span><br><span class="line">};</span><br></pre></td></tr></tbody></table></figure></div>
+
+<p>這段程式碼做的事情是讓接到 request 的時候，將 data 給塞進 req.body 中，body 的部分得依靠第三方函式 querystring.parse 過才能正常，就像使用 express 時也會用到 bodyParser.json() 來將 POST 資料 parse 過</p>
+<p>然後要特別的到 nuxt.config.js 來設定 serverMiddleware</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">javascript</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">serverMiddleware: [</span><br><span class="line">  {</span><br><span class="line">    <span class="attr">path</span>: <span class="string">'/'</span>, <span class="attr">handler</span>: <span class="string">'~/middleware/postRequestHandler'</span>,</span><br><span class="line">  },</span><br><span class="line">],</span><br></pre></td></tr></tbody></table></figure></div>
+
+<p>這樣在 pages/index.vue 中就能直接利用 asyncData 來取得 req.body 的內容</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">javascript</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">asyncData</span>(<span class="params">{ req }</span>)</span> {</span><br><span class="line">  <span class="built_in">console</span>.log(req.body.abc);</span><br><span class="line">},</span><br></pre></td></tr></tbody></table></figure></div>
+
+<p>這邊接 abc 是因為筆者用 Postman 測試發 request 的測試資料就是 abc: 123 到我的 <code>/</code> path</p>
+<p>這樣就能正常取得 POST 來的資料了</p>
+<hr>
+<p>回到 nuxt.config.js 的 serverMiddleware 的配置，似乎一個 path 只能配一個 handler，除了一些特殊的第三方函式庫，因為筆者有試著將不同 path 接同一個 handler 或是將 path 改用正規表示法來寫，似乎都只有第一個 path 會生效，而且還可能會讓第二個 path 直接當掉，這部分算是還不夠熟悉 Nuxt 的底層，其實也不打算熟悉啦，它蠻多架構的用法有搞清楚是真的省了些麻煩的，不過 google 了一下也沒看到有人用多個 path 給同一隻 handler 用，就當作它只能一個配一個吧！</p>
+</body></html></div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">小馬彬</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章鏈接: </span><span class="post-copyright-info"><a href="https://littlehorseboy.github.io/2020/01/15/2020-nuxt-serverMiddleware/">https://littlehorseboy.github.io/2020/01/15/2020-nuxt-serverMiddleware/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本博客所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://littlehorseboy.github.io" target="_blank">小馬彬的部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/nuxt/">nuxt    </a><a class="post-meta__tags" href="/tags/serverMiddleware/">serverMiddleware    </a></div><div class="post_share"><div class="social-share" data-image="https://nuxtjs.org/design-kit/colored-logo.svg" data-sites="facebook,linkedin,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2020/01/24/2020-Javascript-Array-and-Boolean/"><img class="prev_cover lazyload" data-src="https://ms314006.github.io/static/e87971a563d150dcfc0d784bf20dbb37/0e6ff/JavaScript.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">上一篇</div><div class="prev_info"><span>Javascript 的 Boolean 居然能這樣用（搭配 Array）</span></div></a></div><div class="next-post pull_right"><a href="/2020/01/06/2020-ux-beginner-100/"><img class="next_cover lazyload" data-src="https://im1.book.com.tw/image/getImage?i=https://www.books.com.tw/img/001/073/32/0010733244.jpg&amp;v=58187cbc&amp;w=348&amp;h=348" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>最近讀完了一本 UX 的新手書（不是分享 XD）</span></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相關推薦</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2019/12/06/nuxt-second/" title="nuxt 實作筆記，掛上 eslint-config-airbnb-base"><img class="relatedPosts_cover lazyload"data-src="https://nuxtjs.org/design-kit/colored-logo.svg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-12-06</div><div class="relatedPosts_title">nuxt 實作筆記，掛上 eslint-config-airbnb-base</div></div></a></div><div class="relatedPosts_item"><a href="/2019/12/06/nuxt-first/" title="nuxt 實作筆記，從 create-nuxt-app 到架上 github pages"><img class="relatedPosts_cover lazyload"data-src="https://nuxtjs.org/design-kit/colored-logo.svg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-12-06</div><div class="relatedPosts_title">nuxt 實作筆記，從 create-nuxt-app 到架上 github pages</div></div></a></div><div class="relatedPosts_item"><a href="/2019/12/06/nuxt-third/" title="nuxt 實作筆記，加上 scss"><img class="relatedPosts_cover lazyload"data-src="https://nuxtjs.org/design-kit/colored-logo.svg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-12-06</div><div class="relatedPosts_title">nuxt 實作筆記，加上 scss</div></div></a></div></div><div class="clear_both"></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 評論</span></div><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: 'a9d83a868e19bdb04bb4',
+  clientSecret: '5a4b2ce241640360cd486a32500550ecca67e8b1',
+  repo: 'littlehorseboy.github.io',
+  owner: 'littlehorseboy',
+  admin: 'littlehorseboy',
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-TW',
+  updateCountCallback: commentCount
+})
+gitalk.render('gitalk-container')
+
+function commentCount(n){
+  document.getElementsByClassName('gitalk-comment-count')[0].innerHTML= n
+}</script></div></div></main><footer id="footer" style="background-image: url(https://nuxtjs.org/design-kit/colored-logo.svg)" data-type="photo"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 小馬彬</div><div class="framework-info"><span>Power by </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="閲讀模式"></i><i class="fa fa-plus" id="font_plus" title="放大字體"></i><i class="fa fa-minus" id="font_minus" title="縮小字體"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="簡繁轉換" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="夜間模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="設置"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="直達評論"><i class="scroll_to_comment fa fa-comments">  </i></a><i class="fa fa-list-ul close" id="mobile-toc-button" title="目錄" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到頂部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async=""></script><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div></body></html>
